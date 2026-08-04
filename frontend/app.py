@@ -41,19 +41,31 @@ if STYLE_PATH.exists():
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 
-# --- Cached Session State Initializers ---
+# --- Lazy Cached Service Initializers ---
 @st.cache_resource
-def get_platform_services():
-    db = DatabaseManager()
-    etl = ETLPipeline(db_manager=db)
-    bot = ZeptoSupportChatbot()
-    predictor = DeliveryPredictor()
-    evaluator = ModelEvaluator()
-    viz = AnalyticsVisualizer()
-    return db, etl, bot, predictor, evaluator, viz
+def get_db_mgr():
+    return DatabaseManager()
 
+@st.cache_resource
+def get_etl_pipe():
+    return ETLPipeline(db_manager=get_db_mgr())
 
-db_mgr, etl_pipe, chatbot, predictor, evaluator, visualizer = get_platform_services()
+@st.cache_resource
+def get_chatbot():
+    return ZeptoSupportChatbot()
+
+@st.cache_resource
+def get_predictor():
+    return DeliveryPredictor()
+
+@st.cache_resource
+def get_evaluator():
+    return ModelEvaluator()
+
+@st.cache_resource
+def get_visualizer():
+    return AnalyticsVisualizer()
+
 
 if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = [
@@ -102,7 +114,7 @@ if page == "🏠 Home":
     c1, c2, c3, c4 = st.columns(4)
 
     # Fetch stats
-    df_products = db_mgr.fetch_products_dataframe()
+    df_products = get_db_mgr().fetch_products_dataframe()
     num_prods = len(df_products) if not df_products.empty else 50
     doc_count = len(list(DOCUMENTS_DIR.glob("*.*")))
 
@@ -191,7 +203,7 @@ elif page == "⚙️ Data Pipeline":
         if st.button("▶️ Execute Full ETL Pipeline"):
             with st.spinner("Extracting web product data, transforming records, and persisting to SQL..."):
                 try:
-                    df_cleaned, summary = etl_pipe.run(num_items=num_items)
+                    df_cleaned, summary = get_etl_pipe().run(num_items=num_items)
                     st.success(f"✅ Pipeline Execution Succeeded! (Run ID: {summary['run_id']})")
                     
                     st.json(summary)
@@ -201,7 +213,7 @@ elif page == "⚙️ Data Pipeline":
 
     with tab2:
         st.subheader("Stored Product Records in Database")
-        df_prod = db_mgr.fetch_products_dataframe()
+        df_prod = get_db_mgr().fetch_products_dataframe()
         if df_prod.empty:
             st.info("No records found in database. Click 'Execute Full ETL Pipeline' above to populate.")
         else:
@@ -248,7 +260,7 @@ elif page == "📊 Analytics & ML":
         "📌 Feature Importance"
     ])
 
-    df_analytics = predictor.artifact.get("scaler", None)
+    df_analytics = get_predictor().artifact.get("scaler", None)
     from analytics.preprocessing import DataPreprocessor
     proc = DataPreprocessor()
     df_raw = proc.clean_and_impute(proc.load_data())
@@ -270,21 +282,21 @@ elif page == "📊 Analytics & ML":
         )
 
         if "1." in chart_type:
-            st.pyplot(visualizer.plot_histogram(df_raw))
+            st.pyplot(get_visualizer().plot_histogram(df_raw))
         elif "2." in chart_type:
-            st.pyplot(visualizer.plot_scatter(df_raw))
+            st.pyplot(get_visualizer().plot_scatter(df_raw))
         elif "3." in chart_type:
-            st.pyplot(visualizer.plot_boxplot(df_raw))
+            st.pyplot(get_visualizer().plot_boxplot(df_raw))
         elif "4." in chart_type:
-            st.pyplot(visualizer.plot_heatmap(df_raw))
+            st.pyplot(get_visualizer().plot_heatmap(df_raw))
         elif "5." in chart_type:
-            st.pyplot(visualizer.plot_countplot(df_raw))
+            st.pyplot(get_visualizer().plot_countplot(df_raw))
         elif "6." in chart_type:
-            st.pyplot(visualizer.plot_piechart(df_raw))
+            st.pyplot(get_visualizer().plot_piechart(df_raw))
         elif "7." in chart_type:
-            st.pyplot(visualizer.plot_barchart(df_raw))
+            st.pyplot(get_visualizer().plot_barchart(df_raw))
         elif "8." in chart_type:
-            st.pyplot(visualizer.plot_linechart(df_raw))
+            st.pyplot(get_visualizer().plot_linechart(df_raw))
 
     with ml_tab2:
         st.subheader("Model Benchmark & Comparison Leaderboard")
@@ -296,7 +308,7 @@ elif page == "📊 Analytics & ML":
                 st.dataframe(pd.DataFrame(leaderboard).T, use_container_width=True)
 
         st.markdown("#### Evaluation Diagnostic Plots")
-        m_eval = evaluator.evaluate_model()
+        m_eval = get_evaluator().evaluate_model()
         c_roc, c_cm = st.columns(2)
         with c_roc:
             st.pyplot(m_eval["fig_roc"])
@@ -331,7 +343,7 @@ elif page == "📊 Analytics & ML":
                 "driver_experience_years": driver_exp,
                 "delivery_time_mins": deliv_time,
             }
-            res = predictor.predict_sample(payload)
+            res = get_predictor().predict_sample(payload)
 
             color = "#FF3269" if res["prediction_class"] == 1 else "#00C853"
             st.markdown(
@@ -350,7 +362,7 @@ elif page == "📊 Analytics & ML":
 
     with ml_tab4:
         st.subheader("📌 Feature Importance Analysis")
-        m_eval = evaluator.evaluate_model()
+        m_eval = get_evaluator().evaluate_model()
         df_imp = pd.DataFrame(m_eval["feature_importance"])
         st.dataframe(df_imp, use_container_width=True)
 
@@ -378,7 +390,7 @@ elif page == "🤖 Support Assistant":
 
             with st.chat_message("assistant"):
                 with st.spinner("Searching FAISS policy index & generating response..."):
-                    res = chatbot.ask(prompt)
+                    res = get_chatbot().ask(prompt)
                     ans = res["answer"]
                     st.markdown(ans)
                     st.session_state.chat_messages.append({"role": "assistant", "content": ans})
@@ -398,7 +410,7 @@ elif page == "🤖 Support Assistant":
                 buffer.write(uploaded_file.getbuffer())
             st.success(f"Uploaded `{uploaded_file.name}`!")
             if st.button("🔄 Re-index FAISS Vector Store"):
-                num_chunks = chatbot.rag_pipeline.build_or_refresh_knowledge_base()
+                num_chunks = get_chatbot().rag_pipeline.build_or_refresh_knowledge_base()
                 st.success(f"Knowledge Base Updated ({num_chunks} total chunks indexed)!")
 
 
@@ -413,10 +425,10 @@ elif page == "🛠️ Settings":
     openai_key = st.text_input("OpenAI API Key", value="", type="password")
 
     st.subheader("🗄️ Database & Vector Index Diagnostics")
-    st.write(f"**Database URL**: `{db_mgr.db_url}`")
+    st.write(f"**Database URL**: `{get_db_mgr().db_url}`")
     st.write(f"**Vector Store Directory**: `{DOCUMENTS_DIR.parent / 'faiss_index'}`")
 
     if st.button("🧹 Clear Conversation History"):
-        chatbot.clear_history()
+        get_chatbot().clear_history()
         st.session_state.chat_messages = []
         st.success("Cleared chatbot conversation memory!")
