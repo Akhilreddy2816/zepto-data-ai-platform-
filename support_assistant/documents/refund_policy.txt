@@ -1,0 +1,17 @@
+# Zepto Customer & Delivery Refund Policy
+
+## 1. Quick-Commerce Refund Guarantee
+- If delivered products are damaged, expired, missing, or delivered past the 15-minute SLA guarantee by over 30 minutes, customers are eligible for a 100% instant refund or Zepto Cash credit.
+- Refund requests must be logged in the Zepto App within 48 hours of delivery order timestamp with item photos attached.
+
+## 2. Eligible Items for Instant Refund
+- Perishable groceries (Fruits, Vegetables, Dairy, Bakery) with quality defects or spoilages.
+- Wrong item delivered or missing items from sealed bag.
+
+## 3. Non-Refundable Categories
+- Opened personal care items, cosmetics, or hygiene products unless damaged prior to seal breakage.
+- Electronic gift vouchers or third-party digital code purchases.
+
+## 4. Processing Timelines
+- Zepto Wallet / Cash Refunds: Processed within 10 minutes of claim approval.
+- Original Payment Method (Credit Card / UPI / NetBanking): Processed within 3-5 business days depending on the customer's bank.

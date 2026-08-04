@@ -1,0 +1,17 @@
+# Zepto Employee Handbook (2026 Edition)
+
+## 1. Introduction & Core Values
+Welcome to Zepto! We are committed to deliver speed, reliability, and excellence across quick-commerce operations. Every team member is expected to uphold integrity, customer obsession, and extreme ownership.
+
+## 2. Work Hours & Attendance
+- Standard office hours are 9:00 AM to 6:00 PM IST, Monday through Friday.
+- Flexible work policy allows up to 2 days of remote work per week for engineering and tech teams.
+- Core attendance hours are 10:30 AM to 4:30 PM.
+
+## 3. Code of Conduct & Anti-Harassment
+Zepto strictly enforces a zero-tolerance policy against harassment, discrimination, or non-inclusive behavior. Concerns should be escalated immediately to hr-escalation@zepto.in or the POSH committee.
+
+## 4. Equipment & Data Security
+- Company-issued laptops must be secured with full disk encryption and BitLocker enabled.
+- Never store production credentials or customer PII in unencrypted local text files.
+- VPN must be connected when accessing internal APIs or database bastions remotely.
