@@ -202,3 +202,5 @@ pytest tests/ -v --cov=.
 ## 📜 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
+## Deployed Link : 
+https://akhilreddy2816-zepto-data-ai-platform--frontendapp-xxw7y2.streamlit.app/

@@ -9,6 +9,21 @@
     --zepto-muted: #6C757D;
 }
 
+/* Base App Background & Text */
+.stApp {
+    background-color: var(--zepto-bg) !important;
+    color: var(--zepto-text) !important;
+}
+
+header[data-testid="stHeader"] {
+    background-color: transparent !important;
+}
+
+/* Main Container Text */
+.stApp p, .stApp span, .stApp label, .stApp div {
+    color: var(--zepto-text);
+}
+
 /* Sidebar Styling */
 [data-testid="stSidebar"] {
     background-color: var(--zepto-purple) !important;

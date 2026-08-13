@@ -64,9 +64,9 @@ def parse_price(price_str: any) -> Optional[float]:
     if isinstance(price_str, (int, float)):
         return float(price_str)
     
-    cleaned = re.sub(r"[^\d.]", "", str(price_str))
+    cleaned = re.sub(r"[^\d.-]", "", str(price_str))
     try:
-        return float(cleaned) if cleaned else None
+        return float(cleaned) if cleaned and cleaned != "-" else None
     except ValueError:
         return None
 

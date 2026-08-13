@@ -2,5 +2,18 @@
 headless = true
 fileWatcherType = "none"
 address = "0.0.0.0"
-enableCORS = false
+port = 8501
+enableCORS = true
 enableXsrfProtection = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+base = "light"
+primaryColor = "#FF3269"
+backgroundColor = "#F8F9FA"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1A1A1A"
+font = "sans serif"
+

@@ -87,9 +87,11 @@ class DataTransformer:
         )
 
         # 6. Fill Category and Brand Defaults
-        df["category"].fillna("General Merchandise", inplace=True)
-        df["brand"].fillna("Generic", inplace=True)
-        df["stock_status"].fillna("In Stock", inplace=True)
+        for col, default_val in [("category", "General Merchandise"), ("brand", "Generic"), ("stock_status", "In Stock")]:
+            if col not in df.columns:
+                df[col] = default_val
+            else:
+                df[col] = df[col].fillna(default_val)
 
         # 7. Deduplicate Records based on Product Name & Brand
         before_dedup = len(df)
